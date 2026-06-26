@@ -1,0 +1,91 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import RegistrationForm, PostCreationForm
+from django.views import View
+from .models import Post
+
+
+class RegisterView(View):
+    def get(self, request):
+        form = RegistrationForm()
+        return render(request, "register.html", {"form": form})
+
+    def post(self, request):
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("main")
+        return render(request, "register.html", {"form": form})
+
+
+class LoginView(View):
+    def get(self, request):
+        form = AuthenticationForm()
+        return render(request, "login.html", {"form": form})
+
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect("main")
+        return render(request, "login.html", {"form": form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("main")
+
+
+class PostListView(View):
+    def get(self, request):
+        posts = Post.objects.all().order_by("-created_at")
+        return render(request, "main.html", {"posts": posts})
+
+
+class PostDetailView(View):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        return render(request, "post_detail.html", {"post": post})
+
+
+class PostCreateView(View):
+    def get(self, request):
+        form = PostCreationForm()
+        return render(request, "post_create.html", {"form": form})
+
+    def post(self, request):
+        form = PostCreationForm(request.POST, request.FILE)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.author = request.user
+            obj.save()
+            return redirect("main")
+        return render(request, "post_create.html", {"form": form})
+
+
+class PostUpdateView(View):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        return render(request, "post_update.html", {"post": post})
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        form = PostCreationForm(request.POST, request.FILE, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect("main")
+        return render(request, "post_update.html", {"form": form, "post": post})
+
+
+class PostDeleteView(View):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        return render(request, "post_delete.html", {"post": post})
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        post.delete()
+        return redirect("main")
