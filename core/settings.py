@@ -123,3 +123,5 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "photos"
 
 AUTH_USER_MODEL = "app.CustomUser"
+
+LOGIN_URL = 'login'

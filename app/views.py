@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import PermissionDenied
 from .forms import RegistrationForm, PostCreationForm
 from django.views import View
 from .models import Post
@@ -51,13 +53,13 @@ class PostDetailView(View):
         return render(request, "post_detail.html", {"post": post})
 
 
-class PostCreateView(View):
+class PostCreateView(LoginRequiredMixin, View):
     def get(self, request):
         form = PostCreationForm()
         return render(request, "post_create.html", {"form": form})
 
     def post(self, request):
-        form = PostCreationForm(request.POST, request.FILE)
+        form = PostCreationForm(request.POST, request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.author = request.user
@@ -66,26 +68,35 @@ class PostCreateView(View):
         return render(request, "post_create.html", {"form": form})
 
 
-class PostUpdateView(View):
+class PostUpdateView(LoginRequiredMixin, View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        return render(request, "post_update.html", {"post": post})
+        form = PostCreationForm(instance=post)
+        return render(request, "post_update.html", {"form": form, "post": post})
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        form = PostCreationForm(request.POST, request.FILE, instance=post)
+        if post.author != request.user and not request.user.is_staff:
+            raise PermissionDenied
+        form = PostCreationForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
             return redirect("main")
         return render(request, "post_update.html", {"form": form, "post": post})
 
 
-class PostDeleteView(View):
+class PostDeleteView(LoginRequiredMixin, View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
+
+        if post.author != request.user and not request.user.is_staff:
+            raise PermissionDenied
+
         return render(request, "post_delete.html", {"post": post})
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
+        if post.author != request.user and not request.user.is_staff:
+            raise PermissionDenied
         post.delete()
         return redirect("main")
