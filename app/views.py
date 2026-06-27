@@ -71,6 +71,8 @@ class PostCreateView(LoginRequiredMixin, View):
 class PostUpdateView(LoginRequiredMixin, View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
+        if post.author != request.user and not request.user.is_staff:
+            raise PermissionDenied
         form = PostCreationForm(instance=post)
         return render(request, "post_update.html", {"form": form, "post": post})
 
