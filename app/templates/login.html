@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход в аккаунт{% endblock %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 60px auto; background: var(--bg-card); padding: 40px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="font-size: 26px; font-weight: 700; color: var(--text-main); margin: 0 0 8px 0; letter-spacing: -0.5px;">Войти в аккаунт</h1>
+        <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Рады видеть тебя снова! Введи свои данные.</p>
+    </div>
+
+    <form method="post" class="django-form authentication-form">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div style="background-color: #fef2f2; color: #ef4444; padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 20px; border: 1px solid #fca5a5;">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {{ form.as_p }}
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 15px; margin-top: 15px; font-weight: 600;">
+            Войти
+        </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 14px; color: var(--text-muted);">
+        Ещё нет аккаунта? <a href="{% url 'register' %}" style="color: var(--primary); text-decoration: none; font-weight: 500;">Зарегистрироваться</a>
+    </div>
+
+</div>
+{% endblock %}

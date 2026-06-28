@@ -1,0 +1,497 @@
+:root {
+    --bg-global: #f8fafc;       
+    --bg-card: #ffffff;         
+    --text-main: #0f172a;       
+    --text-muted: #64748b;      
+    --primary: #2563eb;         
+    --primary-hover: #1d4ed8;   
+    --border-color: #e2e8f0;    
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-global);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- НАВИГАЦИЯ (NAVBAR) --- */
+.navbar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.nav-logo span {
+    color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-user {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.nav-item {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-item:hover {
+    color: var(--text-main);
+}
+
+/* --- КНОПКИ --- */
+.btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-outline {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.btn-outline:hover {
+    border-color: var(--text-muted);
+    color: var(--text-main);
+}
+
+/* --- ЛЕНТА ПОСТОВ --- */
+.main-content {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 30px;
+}
+
+.posts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Карточка поста */
+.post-card {
+    display: flex;
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: box-shadow 0.2s, transform 0.2s;
+    min-height: 180px;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}
+
+/* Картинка */
+.post-image-box {
+    width: 280px;
+    min-width: 280px;
+    position: relative;
+    align-self: stretch;
+    display: flex;
+}
+
+.post-image-box img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Контентная часть */
+.post-content-box {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+.post-header-row h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.post-header-row h2 a {
+    color: var(--text-main);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.post-header-row h2 a:hover {
+    color: var(--primary);
+}
+
+.post-meta {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.post-text {
+    margin: 12px 0 0 0;
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Красивые инпуты для форм Django */
+.django-form p {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.django-form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.django-form input[type="text"],
+.django-form input[type="file"],
+.django-form textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 15px;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.django-form input:focus,
+.django-form textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.django-form textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.btn-profile {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    font-weight: 600 !important;
+}
+
+.btn-profile:hover {
+    background-color: #e2e8f0;
+    color: var(--primary);
+}
+
+.avatar-hover-box .avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; 
+    transition: opacity 0.2s ease;
+}
+
+.avatar-hover-box .avatar-overlay span {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.avatar-hover-box:hover .avatar-overlay {
+    opacity: 1;
+}
+
+/* Дополнительный стиль для адаптивности полей входа и регистрации */
+.authentication-form input[type="text"],
+.authentication-form input[type="password"] {
+    width: 100%;
+    box-sizing: border-box; /* Чтобы внутренние отступы не распирали инпут наружу */
+}
+
+/* Тело карточки */
+.post-card-body {
+    flex-grow: 1;
+}
+
+.post-card-body h2 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.post-card-body h2 a {
+    color: var(--text-main);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.post-card-body h2 a:hover {
+    color: var(--primary);
+}
+
+/* Блок автора */
+.post-author-block {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: opacity 0.2s;
+}
+
+.post-author-block:hover {
+    opacity: 0.8;
+}
+
+.post-author-block:hover .author-name {
+    color: var(--primary);
+}
+
+/* Мини-аватарка автора */
+.author-mini-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+.author-mini-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.author-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    transition: color 0.2s;
+}
+
+/* Подвал карточки */
+.post-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+    margin-top: 16px;
+}
+
+.post-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.post-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Кнопки действий */
+.btn-action {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.btn-edit {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.btn-edit:hover {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.btn-delete {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+
+.btn-delete:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.post-date-badge {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Заглушка изображения */
+.no-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+    color: #64748b;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Ошибки форм Django */
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 0 0;
+    color: #ef4444;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.errorlist li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.errorlist li::before {
+    content: "⚠️";
+    font-size: 11px;
+}
+
+/* --- АДАПТИВНОСТЬ (RESPONSIVENESS) --- */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .main-content {
+        padding: 20px 10px;
+    }
+
+    .posts-container {
+        gap: 20px;
+    }
+
+    .post-card {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .post-image-box {
+        width: 100%;
+        min-width: 100%;
+        height: 200px;
+    }
+
+    .post-content-box {
+        padding: 20px;
+    }
+
+    .post-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .post-footer-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

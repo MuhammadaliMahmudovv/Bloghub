@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BlogHub{% endblock %}</title>
+    <!-- Подключаем стильный современный шрифт Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'main' %}" class="nav-logo">Blog<span>Hub</span></a>
+            
+            <div class="nav-links">
+    {% if request.user.is_authenticated %}
+        <!-- Передаем username текущего пользователя в url 'profile' -->
+        <a href="{% url 'profile' request.user.username %}" class="btn btn-profile">
+            👤 {{ request.user.username }}
+        </a>
+        <a href="{% url 'create' %}" class="btn btn-primary">Создать статью</a>
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline">Выйти</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}" class="nav-item">Войти</a>
+        <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
+    {% endif %}
+</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

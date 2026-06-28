@@ -4,8 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import PermissionDenied
 from .forms import RegistrationForm, PostCreationForm
+from .models import Post, CustomUser
 from django.views import View
-from .models import Post
 
 
 class RegisterView(View):
@@ -102,3 +102,21 @@ class PostDeleteView(LoginRequiredMixin, View):
             raise PermissionDenied
         post.delete()
         return redirect("main")
+
+
+class UsersProfileView(View):
+    def get(self, request, username):
+        profile_user = get_object_or_404(CustomUser, username=username)
+        user_posts = Post.objects.filter(author=profile_user).order_by("-created_at")
+        return render(
+            request, "profile.html", {"user": profile_user, "posts": user_posts}
+        )
+
+
+class UpdateAvatarView(LoginRequiredMixin, View):
+    def post(self, request):
+        if "photo" in request.FILES:
+            user = request.user
+            user.photo = request.FILES["photo"]
+            user.save()
+        return redirect("profile", username=user.username)

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль {{ user.username }}{% endblock %}
+
+{% block content %}
+<div style="margin: 40px auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 15px;">
+    
+    <!-- Если профиль принадлежит текущему вошедшему пользователю, разрешаем менять фото -->
+    {% if request.user == user %}
+        <form id="avatarForm" action="{% url 'update_avatar' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="avatarInput" name="photo" accept="image/*" style="display: none;" onchange="document.getElementById('avatarForm').submit();">
+            
+            <div onclick="document.getElementById('avatarInput').click();" 
+                 style="width: 110px; height: 110px; border-radius: 50%; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; position: relative;" 
+                 class="avatar-hover-box">
+                
+                {% if user.photo %}
+                    <img src="{{ user.photo.url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <span style="font-weight: 700; color: #94a3b8; font-size: 36px; text-transform: uppercase;">
+                        {{ user.username|slice:":1" }}
+                    </span>
+                {% endif %}
+
+                <div class="avatar-overlay">
+                    <span>Сменить</span>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <!-- Если это чужой профиль, показываем просто обычную аватарку без возможности клика и смены -->
+        <div style="width: 110px; height: 110px; border-radius: 50%; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+            {% if user.photo %}
+                <img src="{{ user.photo.url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+                <span style="font-weight: 700; color: #94a3b8; font-size: 36px; text-transform: uppercase;">
+                    {{ user.username|slice:":1" }}
+                </span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div>
+        <h1 style="font-size: 26px; font-weight: 700; color: var(--text-main); margin: 0 0 8px 0; letter-spacing: -0.5px;">
+            {{ user.username }}
+        </h1>
+        
+        <p style="color: var(--text-muted); font-size: 14px; margin: 0 0 12px 0;">
+            {{ user.email }}
+        </p>
+        
+        <!-- Проверяем статус именно того пользователя, чей профиль открыт (user, а не request.user) -->
+        <span style="background: #e0f2fe; color: #0369a1; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block;">
+            {% if user.is_staff %}Модератор{% else %}Автор{% endif %}
+        </span>
+    </div>
+
+</div>
+
+<h2 class="page-title" style="margin-bottom: 25px;">Публикации автора ({{ posts.count }})</h2>
+
+<div class="posts-container">
+    {% for post in posts %}
+        <div class="post-card">
+            
+            <div class="post-image-box">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Обложка">
+                {% else %}
+                    <div class="no-image">No Photo</div>
+                {% endif %}
+            </div>
+            
+            <div class="post-content-box">
+                <div class="post-card-body">
+                    <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+                    <p class="post-text">{{ post.content|truncatewords:30 }}</p>
+                </div>
+                
+                <div class="post-card-footer">
+                    {% if post.author %}
+                        <a href="{% url 'profile' post.author.username %}" class="post-author-block">
+                            <div class="author-mini-avatar">
+                                {% if post.author.photo %}
+                                    <img src="{{ post.author.photo.url }}" alt="">
+                                {% else %}
+                                    <span>{{ post.author.username|slice:":1"|upper }}</span>
+                                {% endif %}
+                            </div>
+                            <span class="author-name">{{ post.author.username }}</span>
+                        </a>
+                    {% else %}
+                        <div class="post-author-block">
+                            <div class="author-mini-avatar">
+                                <span>?</span>
+                            </div>
+                            <span class="author-name text-muted">Удаленный пользователь</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="post-footer-right">
+                        {% if request.user.is_authenticated and post.author and request.user == post.author or request.user.is_staff %}
+                            <div class="post-actions">
+                                <a href="{% url 'update' post.pk %}" class="btn-action btn-edit">Изменить</a>
+                                <a href="{% url 'delete' post.pk %}" class="btn-action btn-delete">Удалить</a>
+                            </div>
+                        {% endif %}
+                        <span class="post-date-badge">{{ post.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    {% empty %}
+        <div style="text-align: center; padding: 40px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-muted); width: 100%; box-sizing: border-box;">
+            У этого пользователя пока нет публикаций.
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Удалить публикацию?{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 60px auto; background: var(--bg-card); padding: 40px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center;">
+    <h1 style="font-size: 24px; color: #ef4444; margin-bottom: 15px;">Удаление статьи</h1>
+    <p style="color: var(--text-muted); margin-bottom: 30px;">
+        Вы уверены, что хотите безвозвратно удалить статью <strong>«{{ post.title }}»</strong>? Это действие нельзя будет отменить.
+    </p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <button type="submit" class="btn" style="background-color: #ef4444; color: white;">Да, удалить</button>
+            <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

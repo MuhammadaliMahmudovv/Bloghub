@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование: {{ post.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; background: var(--bg-card); padding: 40px; border-radius: 12px; border: 1px solid var(--border-color);">
+    <h1 class="page-title" style="margin-bottom: 25px;">Редактировать статью</h1>
+    
+    <form method="post" enctype="multipart/form-data" class="django-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <div style="margin-top: 25px; display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

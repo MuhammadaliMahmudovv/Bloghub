@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Tashkent"
 
 USE_I18N = True
 
@@ -115,13 +115,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = "static/"
-
 # ----------------------------------------- #
+import os
+
+STATIC_URL = "static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "photos"
 
 AUTH_USER_MODEL = "app.CustomUser"
 
-LOGIN_URL = 'login'
+LOGIN_URL = "login"
+
+LOGIN_REDIRECT_URL = 'main'  
+LOGOUT_REDIRECT_URL = 'main' 

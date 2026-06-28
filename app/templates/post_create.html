@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать публикацию{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; background: var(--bg-card); padding: 40px; border-radius: 12px; border: 1px solid var(--border-color);">
+    <h1 class="page-title" style="margin-bottom: 25px;">Новая публикация</h1>
+    
+    <form method="post" enctype="multipart/form-data" class="django-form">
+        {% csrf_token %}
+        
+        <!-- Django автоматически сгенерирует поля. Чтобы сделать их красивыми через CSS, обернем в as_p -->
+        {{ form.as_p }}
+        
+        <div style="margin-top: 25px; display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Опубликовать</button>
+            <a href="{% url 'main' %}" class="btn btn-outline">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

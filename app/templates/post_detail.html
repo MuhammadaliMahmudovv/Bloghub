@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<article style="max-width: 800px; margin: 40px auto; background: var(--bg-card); padding: 40px; border-radius: 12px; border: 1px solid var(--border-color);">
+    
+    {% if post.image %}
+        <div style="width: 100%; max-height: 400px; overflow: hidden; border-radius: 8px; margin-bottom: 25px;">
+            <img src="{{ post.image.url }}" alt="Обложка" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    {% endif %}
+
+    <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 10px;">{{ post.title }}</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 15px;">
+        <p class="post-meta" style="margin: 0;">
+            {% if post.author %}
+                Автор: <strong>{{ post.author.username }}</strong>
+            {% else %}
+                Автор: <strong class="text-muted">Удаленный пользователь</strong>
+            {% endif %}
+            | Дата: {{ post.created_at|date:"d.m.Y H:i" }}
+        </p>
+        {% if request.user.is_authenticated and post.author and request.user == post.author or request.user.is_staff %}
+            <div class="post-actions">
+                <a href="{% url 'update' post.pk %}" class="btn-action btn-edit">Изменить</a>
+                <a href="{% url 'delete' post.pk %}" class="btn-action btn-delete">Удалить</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="font-size: 17px; line-height: 1.8; color: #334155; white-space: pre-line;">
+        {{ post.content }}
+    </div>
+
+
+
+</article>
+{% endblock %}
