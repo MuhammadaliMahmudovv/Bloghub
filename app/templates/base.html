@@ -40,6 +40,61 @@
         {% block content %}
         {% endblock %}
     </main>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const likeForms = document.querySelectorAll('.like-form');
+            
+            likeForms.forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const button = form.querySelector('.like-btn');
+                    const countSpan = button.querySelector('.like-count');
+                    
+                    if (button.disabled) return;
+                    button.disabled = true;
+                    
+                    try {
+                        const url = form.action;
+                        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+                        
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrfToken,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            // Если произошел редирект на логин, перенаправляем браузер
+                            if (response.redirected && response.url.includes('/login')) {
+                                window.location.href = response.url;
+                                return;
+                            }
+                            
+                            const isLiked = button.classList.contains('liked');
+                            let count = parseInt(countSpan.textContent) || 0;
+                            
+                            if (isLiked) {
+                                button.classList.remove('liked');
+                                countSpan.textContent = Math.max(0, count - 1);
+                            } else {
+                                button.classList.add('liked');
+                                countSpan.textContent = count + 1;
+                            }
+                        } else {
+                            window.location.reload();
+                        }
+                    } catch (error) {
+                        console.error('Ошибка при отправке лайка:', error);
+                        form.submit();
+                    } finally {
+                        button.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
-</html>
+</html>

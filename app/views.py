@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import PermissionDenied
 from .forms import RegistrationForm, PostCreationForm
-from .models import Post, CustomUser
+from .models import Post, CustomUser, Like
 from django.views import View
 
 
@@ -43,13 +43,14 @@ def logout_view(request):
 
 class PostListView(View):
     def get(self, request):
-        posts = Post.objects.all().order_by("-created_at")
+        posts = Post.objects.all().prefetch_related("likes").order_by("-created_at")
         return render(request, "main.html", {"posts": posts})
 
 
 class PostDetailView(View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
+        likes = post.likes.all().count()
         return render(request, "post_detail.html", {"post": post})
 
 
@@ -115,8 +116,17 @@ class UsersProfileView(View):
 
 class UpdateAvatarView(LoginRequiredMixin, View):
     def post(self, request):
+        user = request.user
         if "photo" in request.FILES:
-            user = request.user
             user.photo = request.FILES["photo"]
             user.save()
         return redirect("profile", username=user.username)
+
+
+class LikePost(LoginRequiredMixin, View):
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            like.delete()
+        return redirect("post_detail", pk=post_id) 
