@@ -9,6 +9,7 @@ urlpatterns = [
     path("posts/<int:pk>/update/", views.PostUpdateView.as_view(), name="update"),
     path("posts/<int:pk>/delete/", views.PostDeleteView.as_view(), name="delete"),
     path("posts/<int:post_id>/like/", views.LikePost.as_view(), name="like_post"),
+    path("posts/<int:post_id>/comment/", views.AddCommentView.as_view(), name="add_comment"),
     path("register/", views.RegisterView.as_view(), name="register"),
     path("login/", views.LoginView.as_view(), name="login"),
     path("logout/", views.logout_view, name="logout"),

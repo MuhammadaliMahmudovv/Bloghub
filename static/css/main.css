@@ -559,4 +559,43 @@ body {
     100% {
         transform: scale(1);
     }
+}
+
+/* --- КОММЕНТАРИИ (COMMENTS SECTION) --- */
+.comment-author-link:hover {
+    color: var(--primary) !important;
+}
+
+.comment-form-container textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+.comment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.comment-badge:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: #eff6ff;
+}
+
+.comment-badge .comment-icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
 }

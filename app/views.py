@@ -2,9 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.exceptions import PermissionDenied
 from .forms import RegistrationForm, PostCreationForm
-from .models import Post, CustomUser, Like
+from django.core.exceptions import PermissionDenied
+from .models import Post, CustomUser, Like, Comment
+from django.db.models import Count
 from django.views import View
 
 
@@ -43,15 +44,22 @@ def logout_view(request):
 
 class PostListView(View):
     def get(self, request):
-        posts = Post.objects.all().prefetch_related("likes").order_by("-created_at")
+        posts = (
+            Post.objects.all()
+            .select_related("author")
+            .prefetch_related("likes")
+            .annotate(comments_count=Count("comments"))
+            .order_by("-created_at")
+        )
+
         return render(request, "main.html", {"posts": posts})
 
 
 class PostDetailView(View):
     def get(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        likes = post.likes.all().count()
-        return render(request, "post_detail.html", {"post": post})
+        post = get_object_or_404(Post.objects.select_related("author"), pk=pk)
+        comments = Comment.objects.filter(post=pk).select_related("user")
+        return render(request, "post_detail.html", {"post": post, "comments": comments})
 
 
 class PostCreateView(LoginRequiredMixin, View):
@@ -108,7 +116,13 @@ class PostDeleteView(LoginRequiredMixin, View):
 class UsersProfileView(View):
     def get(self, request, username):
         profile_user = get_object_or_404(CustomUser, username=username)
-        user_posts = Post.objects.filter(author=profile_user).order_by("-created_at")
+        user_posts = (
+            Post.objects.filter(author=profile_user)
+            .select_related("author")
+            .prefetch_related("likes")
+            .annotate(comments_count=Count("comments"))
+            .order_by("-created_at")
+        )
         return render(
             request, "profile.html", {"user": profile_user, "posts": user_posts}
         )
@@ -129,4 +143,15 @@ class LikePost(LoginRequiredMixin, View):
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             like.delete()
-        return redirect("post_detail", pk=post_id) 
+        return redirect("post_detail", pk=post_id)
+
+
+class AddCommentView(LoginRequiredMixin, View):
+    def post(self, request, post_id):
+        user = request.user
+        post = get_object_or_404(Post, pk=post_id)
+        comment = request.POST.get("text", "").strip()
+
+        if comment:
+            Comment.objects.create(post=post, user=user, text=comment)
+        return redirect("post_detail", pk=post_id)

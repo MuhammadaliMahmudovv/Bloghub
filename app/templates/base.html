@@ -21,7 +21,7 @@
     {% if request.user.is_authenticated %}
         <!-- Передаем username текущего пользователя в url 'profile' -->
         <a href="{% url 'profile' request.user.username %}" class="btn btn-profile">
-            👤 {{ request.user.username }}
+            {{ request.user.username }}
         </a>
         <a href="{% url 'create' %}" class="btn btn-primary">Создать статью</a>
         <form action="{% url 'logout' %}" method="post" style="display:inline;">
@@ -97,4 +97,4 @@
         });
     </script>
 </body>
-</html>
+</html>
