@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "app",
-    "debug_toolbar"
-    
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -131,10 +130,9 @@ AUTH_USER_MODEL = "app.CustomUser"
 
 LOGIN_URL = "login"
 
-LOGIN_REDIRECT_URL = 'main'  
-LOGOUT_REDIRECT_URL = 'main' 
+LOGIN_REDIRECT_URL = "main"
+LOGOUT_REDIRECT_URL = "main"
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-
