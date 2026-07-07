@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistrationForm, PostCreationForm
 from django.core.exceptions import PermissionDenied
 from .models import Post, CustomUser, Like, Comment
+from django.core.paginator import Paginator
 from django.db.models import Count
 from django.views import View
 
@@ -52,7 +53,19 @@ class PostListView(View):
             .order_by("-created_at")
         )
 
-        return render(request, "main.html", {"posts": posts})
+        search_query = request.GET.get("search", "").strip()
+        from django.db.models import Q
+
+        if search_query:
+            posts = posts.filter(Q(title__icontains=search_query))
+
+        paginator = Paginator(posts, 5)
+        page_num = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_num)
+
+        return render(
+            request, "main.html", {"page_obj": page_obj, "search_query": search_query}
+        )
 
 
 class PostDetailView(View):

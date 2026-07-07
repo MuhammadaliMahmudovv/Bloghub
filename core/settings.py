@@ -42,12 +42,12 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.security.SecurityMiddleware",  # http - https
+    "django.contrib.sessions.middleware.SessionMiddleware",  # программа смотрит в cookies запроса, находит там ID сессии лезит в базу данных и понимает какой пользователь зашел.
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",  # зашита от csrf атак
+    "django.contrib.auth.middleware.AuthenticationMiddleware",  # берез данные из SessionMiddleware и добавляет в наш объект request свойство request.user
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]

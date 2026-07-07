@@ -3,10 +3,28 @@
 {% block title %}Главная страница{% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Все публикации</h1>
+    <div class="feed-header">
+        <h1 class="page-title">Все публикации</h1>
+        <form method="GET" action="{% url 'main' %}" class="search-form">
+            <div class="search-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="none" stroke="currentColor" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" name="search" placeholder="Поиск статей..." value="{{ search_query|default:'' }}" class="search-input">
+                {% if search_query %}
+                    <a href="{% url 'main' %}" class="search-clear" title="Очистить поиск">
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path fill="none" stroke="currentColor" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </a>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary search-btn">Найти</button>
+        </form>
+    </div>
     
     <div class="posts-container">
-        {% for post in posts %}
+        {% for post in page_obj %}
             <div class="post-card">
                 
                 <div class="post-image-box">
@@ -80,8 +98,36 @@
             </div>
         {% empty %}
             <div style="text-align: center; padding: 40px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-muted);">
-                Статей пока нет.
+                {% if search_query %}
+                    По запросу «<strong>{{ search_query }}</strong>» ничего не найдено.
+                {% else %}
+                    Статей пока нет.
+                {% endif %}
             </div>
         {% endfor %}
     </div>
+
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="page-link" title="Назад">&laquo;</a>
+            {% else %}
+                <span class="page-link disabled" title="Назад">&laquo;</span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="page-link active">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}" class="page-link">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="page-link" title="Вперед">&raquo;</a>
+            {% else %}
+                <span class="page-link disabled" title="Вперед">&raquo;</span>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
