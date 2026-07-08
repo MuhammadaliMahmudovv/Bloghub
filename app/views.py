@@ -75,10 +75,9 @@ class PostListView(View):
 
 class PostDetailView(View):
     def get(self, request, pk):
-        # post = get_object_or_404(Post.objects.select_related("author"), pk=pk)
-        # comments = Comment.objects.filter(post=pk).select_related("user")
-        # return render(request, "post_detail.html", {"post": post, "comments": comments})
         post = get_object_or_404(Post.objects.select_related("author"), pk=pk)
+
+        is_liked = False
 
         if request.user.is_authenticated:
             is_liked = Like.objects.filter(post=post, user=request.user).exists()
