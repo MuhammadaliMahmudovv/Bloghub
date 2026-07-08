@@ -2,11 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Count, Q, Exists, OuterRef
 from .forms import RegistrationForm, PostCreationForm
 from django.core.exceptions import PermissionDenied
 from .models import Post, CustomUser, Like, Comment
 from django.core.paginator import Paginator
-from django.db.models import Count
 from django.views import View
 
 
@@ -53,11 +53,16 @@ class PostListView(View):
             .order_by("-created_at")
         )
 
+        if request.user.is_authenticated:
+            user_likes = Like.objects.filter(post=OuterRef("pk"), user=request.user)
+            posts = posts.annotate(is_liked=Exists(user_likes))
+
         search_query = request.GET.get("search", "").strip()
-        from django.db.models import Q
 
         if search_query:
             posts = posts.filter(Q(title__icontains=search_query))
+        else:
+            search_query = None
 
         paginator = Paginator(posts, 5)
         page_num = request.GET.get("page", 1)
@@ -70,9 +75,24 @@ class PostListView(View):
 
 class PostDetailView(View):
     def get(self, request, pk):
+        # post = get_object_or_404(Post.objects.select_related("author"), pk=pk)
+        # comments = Comment.objects.filter(post=pk).select_related("user")
+        # return render(request, "post_detail.html", {"post": post, "comments": comments})
         post = get_object_or_404(Post.objects.select_related("author"), pk=pk)
+
+        if request.user.is_authenticated:
+            is_liked = Like.objects.filter(post=post, user=request.user).exists()
+
         comments = Comment.objects.filter(post=pk).select_related("user")
-        return render(request, "post_detail.html", {"post": post, "comments": comments})
+        comments_count = len(comments)
+
+        context = {
+            "post": post,
+            "comments": comments,
+            "comments_count": comments_count,
+            "is_liked": is_liked,
+        }
+        return render(request, "post_detail.html", context)
 
 
 class PostCreateView(LoginRequiredMixin, View):
