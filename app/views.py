@@ -172,6 +172,8 @@ class UpdateAvatarView(LoginRequiredMixin, View):
 class LikePost(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, pk=post_id)
+        if post.author == request.user:
+            raise PermissionDenied
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             like.delete()
@@ -183,7 +185,9 @@ class AddCommentView(LoginRequiredMixin, View):
         user = request.user
         post = get_object_or_404(Post, pk=post_id)
         comment = request.POST.get("text", "").strip()
-
-        if comment:
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+        elif comment:
             Comment.objects.create(post=post, user=user, text=comment)
+
         return redirect("post_detail", pk=post_id)
