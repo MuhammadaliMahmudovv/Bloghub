@@ -64,7 +64,7 @@ class PostListView(View):
         else:
             search_query = None
 
-        paginator = Paginator(posts, 5)
+        paginator = Paginator(posts, 20)
         page_num = request.GET.get("page", 1)
         page_obj = paginator.get_page(page_num)
 

@@ -3,7 +3,6 @@ from django.test import TestCase
 from django.urls import reverse
 
 
-
 class PostListViewTest(TestCase):
     def setUp(self):
         self.user = CustomUser.objects.create_user(
